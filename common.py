@@ -215,16 +215,13 @@ def join_text_gz(name, file_list):
         with gzip.open(name, 'w') as f:
             for i in file_list:
                 t = path_format(str(i))
-                print('join___:'+t)
                 if os.path.exists(t):
                     if t.endswith(r'.txt'):
-                        print('join txt')
                         with open(t, 'r', encoding='utf-8') as a:
                             txt = a.read()+'\n\n'
                             f.write(txt.encode('utf-8'))
                             a.close()
                     elif t.endswith(r'.txt.gz'):
-                        print('join gz')
                         with gzip.open(t, 'rb') as a:
                             txt = a.read().decode('utf-8') + '\n\n'
                             f.write(txt.encode('utf-8'))
@@ -259,7 +256,6 @@ def start_download(mode,info,path =''):
             print('download+++++++++'+i['chapter'])
         else:
             print('download========'+i['chapter'])
-    print(download_list)
     print('join file')
     join_text_gz(path_format(dir_path+'/'+book_name+'.txt.gz'),download_list)
 

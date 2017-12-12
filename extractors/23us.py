@@ -34,7 +34,7 @@ def get_23us_catalog(url):
 
 catalog_list = list()
 book_info = {'name': '','auteur': '', 'catalog':catalog_list}
-
+filter_text = '　　　　    　　　　'
 
 def get_23us_info(url):
     fp = request.urlopen(url)
@@ -64,6 +64,9 @@ def parss_23us_text(text):
     html = text
     metaSoup = BeautifulSoup(html, "html.parser")
     text = metaSoup.select_one('#content').text
+    filter_pos = text.rfind(filter_text)
+    if filter_pos > 0:
+        text = text[:filter_pos]
     return text
 
 def download_book():
