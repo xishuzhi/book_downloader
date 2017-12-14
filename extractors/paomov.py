@@ -1,11 +1,12 @@
-#-*- coding：utf-8 -*-
-#http://www.paomov.com/txt90211.shtml
-
-__all__ = ['get_pamomov_info',"parss_pamomov_text"]
+# -*- coding：utf-8 -*-
+# http://www.paomov.com/txt90211.shtml
 from common import *
+__all__ = ['get_pamomov_info',"parss_pamomov_text"]
+
 
 catalog_list = list()
 book_info = {'name': '','auteur': '', 'catalog':catalog_list}
+
 
 def get_pamomov_info(url):
     fp = request.urlopen(url)
@@ -35,6 +36,7 @@ def get_pamomov_info(url):
 
     return book_info
 
+
 def parss_pamomov_text(text):
     html = text
     metaSoup = BeautifulSoup(html, "html.parser")
@@ -44,8 +46,7 @@ def parss_pamomov_text(text):
 
     return text
 
-def download_book():
-    pass
+
 def print_mode_info():
     return "这是www.paomov.com模块"
 

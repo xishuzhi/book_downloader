@@ -1,11 +1,12 @@
-#-*- coding：utf-8 -*-
-#https://www.xs.la/184_184338/
-
-__all__ = ['get_xs_info',"parss_xs_text"]
+# -*- coding：utf-8 -*-
+# https://www.xs.la/184_184338/
 from common import *
+__all__ = ['get_xs_info', "parss_xs_text"]
+
 
 catalog_list = list()
-book_info = {'name': '','auteur': '', 'catalog':catalog_list}
+book_info = {'name': '', 'auteur': '', 'catalog': catalog_list}
+
 
 def get_xs_info(url):
     # fp = request.urlopen(url)
@@ -26,11 +27,12 @@ def get_xs_info(url):
         p = url.rfind('/')
         if p > 0:
             id = url[p+1:-5]
-        l.append({'chapter':chapter,'url':url,'id':id})
+        l.append({'chapter': chapter, 'url': url, 'id':id})
     book_info['name'] = book_name
     book_info['auteur'] = book_acter
     book_info['catalog'] = l
     return book_info
+
 
 def parss_xs_text(text):
     html = text
@@ -39,12 +41,10 @@ def parss_xs_text(text):
     t = textSoup.prettify()
     t = t[:t.rfind('<br>')]
     tSoup = BeautifulSoup(t, "html.parser")
-    #print(tSoup.get_text())
     text = tSoup.get_text()
     return text
 
-def download_book():
-    pass
+
 def print_mode_info():
     return "这是xs.la模块"
 

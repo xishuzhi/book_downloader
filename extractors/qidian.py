@@ -1,6 +1,10 @@
-#-*- coding：utf-8 -*-
-__all__ = ['get_qidiana_catalog',"print_qidian_mode_info"]
+# -*- coding：utf-8 -*-
+
 from common import *
+
+
+__all__ = ['get_qidiana_catalog',"print_qidian_mode_info"]
+
 
 def get_qidiana_catalog(url):
     pass
@@ -23,6 +27,7 @@ def get_limit_list():
         book.append(data)
     #print(book)
     return book
+
 
 def print_qidian_mode_info():
     return "这是Qidian模块"

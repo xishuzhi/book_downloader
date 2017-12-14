@@ -2,12 +2,11 @@
 import os
 import re
 import gzip
-import json
 from importlib import import_module
 from threading import Thread
-from urllib import request,error
+from urllib import request, error
 from bs4 import BeautifulSoup
-#解决https不受信任
+# 解决https不受信任
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -89,14 +88,14 @@ class downloadbook(Thread):
 
 
 def path_win(path):
-    path =  path.replace('/', '\\')
+    path = path.replace('/', '\\')
     if path[:-1] == '\\':
         path = path[0:-1]
     return path
 
 
 def path_linux(path):
-    path =  path.replace('\\', '/')
+    path = path.replace('\\', '/')
     if path[:-1] == '/':
         path = path[0:-1]
     return path
@@ -109,15 +108,16 @@ def path_format(path):
         path = path_linux(path)
     return path
 
+
 def open_file(path):
     try:
         path = path_format(path)
         with open(path,'r', encoding='utf-8') as f:
             data = f.read()
             f.close()
-            return data;
+            return data
     except Exception as e:
-        print('error:file(%s):%s'% (path,e))
+        print('error:file(%s):%s' % (path, e))
         return ''
         pass
 
@@ -143,7 +143,7 @@ def open_gzip(path):
             f.close
             return data
     except Exception as e:
-        print('open_gzip error file:(%s);%s' % (path,e))
+        print('open_gzip error file:(%s);%s' % (path, e))
         return ''
 
 
@@ -153,18 +153,18 @@ def make_dict(s_in,s_out):
     if len(s_in) <= len(s_out):
         l = len(s_in)
         for i in range(l):
-            d.update(str.maketrans(s_in[i],s_out[i]))
+            d.update(str.maketrans(s_in[i], s_out[i]))
     else:
         l = len(s_out)
         for i in range(l):
             if i < l:
-                d.update(str.maketrans(s_in[i],s_out[i]))
+                d.update(str.maketrans(s_in[i], s_out[i]))
             else:
                 d.update(str.maketrans(s_in[i], ''))
     return d
 
 
-#替换标题不用做路径和文件名
+# 替换标题不用做路径和文件名
 def replace_title(text):
     t = make_dict('ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ１２３４５６７８９０，．！?!\n', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890，。！？！ ')
     text = text.translate(t)
@@ -173,7 +173,7 @@ def replace_title(text):
     return text
 
 
-#替换字符串
+# 替换字符串
 def replace_file_path(path):
     path = path.replace('/', '-')
     path = path.replace('\\', '-')
@@ -200,7 +200,7 @@ def getPath():
     return path
 
 
-#合并文本
+# 合并文本
 def join_text(name,file_list):
     try:
         with open(name, 'w', encoding='utf-8') as f:
@@ -276,6 +276,6 @@ def start_download(mode,info,path =''):
         else:
             print('download========'+i['chapter'])
     print('join file')
-    join_text_gz(path_format(dir_path+'/'+book_name+'.txt.gz'),download_list)
+    join_text_gz(path_format(dir_path+'/'+book_name+'.txt.gz'), download_list)
 
 

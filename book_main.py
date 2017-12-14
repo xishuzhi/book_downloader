@@ -1,10 +1,12 @@
-#-*- coding：utf-8 -*-
+# -*- coding：utf-8 -*-
+
 
 def menu():
     print('输入书籍连接下载：')
     print('x. 退出')
     selection = input('输入书籍URL：')
     return selection
+
 
 def start_main():
     try:
@@ -26,12 +28,13 @@ def start_main():
         return start_main()
     finally:
         pass
+
+
 def main():
         start_main()
 
+
 if __name__ == "__main__":
     main()
-
-
 
 
