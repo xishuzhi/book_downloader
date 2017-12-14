@@ -5,17 +5,17 @@ import gzip
 import json
 from importlib import import_module
 from threading import Thread
-from urllib import request
+from urllib import request,error
 from bs4 import BeautifulSoup
 #解决https不受信任
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 SITES = {
-    'qidian'            : 'qidian',
-    '23us'              :'23us',
-    'xs'                :'xs',
-    'paomov'            :'paomov',
+    'qidian': 'qidian',
+    '23us':'23us',
+    'xs':'xs',
+    'paomov':'paomov',
 
 }
 
@@ -27,11 +27,13 @@ fake_headers = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20100101 Firefox/13.0'
 }
 
+
 # DEPRECATED in favor of match1()
 def r1(pattern, text):
     m = re.search(pattern, text)
     if m:
         return m.group(1)
+
 
 # DEPRECATED in favor of match1()
 def r1_of(patterns, text):
@@ -39,6 +41,7 @@ def r1_of(patterns, text):
         x = r1(p, text)
         if x:
             return x
+
 
 def url_to_module(url):
     try:
@@ -81,7 +84,6 @@ class downloadbook(Thread):
         self.book_downloadmod = downloadmode
         self.dir_path = dir_path
 
-
     def run(self):
         print('run')
 
@@ -92,11 +94,13 @@ def path_win(path):
         path = path[0:-1]
     return path
 
+
 def path_linux(path):
     path =  path.replace('\\', '/')
     if path[:-1] == '/':
         path = path[0:-1]
     return path
+
 
 def path_format(path):
     if os.name == 'nt':
@@ -117,6 +121,7 @@ def open_file(path):
         return ''
         pass
 
+
 def save_gzip(path, data):
     try:
         path = path_format(path)
@@ -130,6 +135,7 @@ def save_gzip(path, data):
         return False
         pass
 
+
 def open_gzip(path):
     try:
         with gzip.open(path, 'rb') as f:
@@ -139,6 +145,7 @@ def open_gzip(path):
     except Exception as e:
         print('open_gzip error file:(%s);%s' % (path,e))
         return ''
+
 
 # 制作字符替换字典
 def make_dict(s_in,s_out):
@@ -155,6 +162,8 @@ def make_dict(s_in,s_out):
             else:
                 d.update(str.maketrans(s_in[i], ''))
     return d
+
+
 #替换标题不用做路径和文件名
 def replace_title(text):
     t = make_dict('ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ１２３４５６７８９０，．！?!\n', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890，。！？！ ')
@@ -162,6 +171,7 @@ def replace_title(text):
     text = text.strip()
     text = text.lstrip()
     return text
+
 
 #替换字符串
 def replace_file_path(path):
@@ -177,6 +187,7 @@ def replace_file_path(path):
     path = path.strip()
     path = path.lstrip()
     return path
+
 
 def getPath():
     path = './'
@@ -212,6 +223,8 @@ def join_text(name,file_list):
     except Exception as e:
         print('join_text_error : %s : %s' % (f,e))
         pass
+
+
 def join_text_gz(name, file_list):
     try:
         with gzip.open(name, 'w') as f:
@@ -250,11 +263,15 @@ def start_download(mode,info,path =''):
         full_path = path_format(dir_path + '/' + f_name)
         download_list.append(full_path)
         if not os.path.exists(full_path) or len(open_gzip(full_path)) < 20:
-            fp = request.urlopen(i['url'])
-            html = fp.read()
-            text = mode.get_text(html)
-            text = i['chapter'] + '\n' + text
-            save_gzip(full_path,text)
+            try:
+                fp = request.urlopen(i['url'], timeout=10)
+                html = fp.read()
+                text = mode.get_text(html)
+                text = i['chapter'] + '\n' + text
+                save_gzip(full_path, text)
+            except error.URLError as e:
+                print('download error,Time out! :'+str(e))
+
             print('download+++++++++'+i['chapter'])
         else:
             print('download========'+i['chapter'])
