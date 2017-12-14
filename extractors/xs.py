@@ -4,41 +4,13 @@
 __all__ = ['get_xs_info',"parss_xs_text"]
 from common import *
 
-def get_23us_catalog(url):
-    #fp = request.urlopen(url)
-    ftext = open("23us.txt",'r',encoding='utf-8')
-    #html = fp.read()
-    html = ftext.read()
-    metaSoup = BeautifulSoup(html, "html.parser")
-    #print(metaSoup)
-    book_name = metaSoup.select_one('#container > div.bookinfo > div > span > h1').test
-    book_acter = metaSoup.select_one('#container > div.bookinfo > div > span > em').test
-    catalog_dl = metaSoup.select('#main > div > dl')
-
-    l = list()
-
-    for i in catalog_dl:
-        print(type(i))
-        dd = i.findAll('dd')
-        for j in dd:
-            chapter = str(j.a.text)
-            url = r'https://www.23us.la'+str(j.a['href'])
-            l.append({'chapter':chapter,'url':url})
-            print("章节名="+str(j.a.text))
-            print("url=" + r'https://www.23us.la'+str(j.a['href']))
-    book_info['name'] = book_name
-    book_info['auteur'] = book_acter
-    book_info['catalog'] = l
-
-
-
 catalog_list = list()
 book_info = {'name': '','auteur': '', 'catalog':catalog_list}
 
 def get_xs_info(url):
-    fp = request.urlopen(url)
-    html = fp.read()
-    # html = open_file("xs.txt")
+    # fp = request.urlopen(url)
+    # html = fp.read()
+    html = open_file("xs.txt")
     metaSoup = BeautifulSoup(html, "html.parser")
     book_name = metaSoup.select_one('#info > h1').text
     book_acter = metaSoup.select_one('#info').text
