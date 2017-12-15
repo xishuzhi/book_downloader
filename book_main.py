@@ -1,4 +1,5 @@
 # -*- coding：utf-8 -*-
+from sys import exit
 
 
 def menu():
@@ -13,11 +14,14 @@ def start_main():
         while True:
             selection = menu()
             if len(selection) > 0:
+                if selection == 'x' or selection == 'X':
+                    exit(0)
                 from common import url_to_module, start_download
                 m, url = url_to_module(selection)
                 if m is not None:
                     info = m.get_info(url)
                     start_download(m, info)
+
                 else:
                     print("没有相应的下载模块")
             else:
