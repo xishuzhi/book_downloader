@@ -247,8 +247,11 @@ def join_text_gz(name, file_list):
         pass
 
 
-def start_download(mode,info,path =''):
+def start_download(mode, info, path='', retry=0):
     thisPath = path
+    retry_count = retry
+    if retry_count >= 5:
+        return
     if thisPath == '':
         thisPath = getPath()
     book_name = info['name']
@@ -271,6 +274,7 @@ def start_download(mode,info,path =''):
                 save_gzip(full_path, text)
             except error.URLError as e:
                 print('download error,Time out! :'+str(e))
+                start_download(mode, info, path,retry_count+1)
 
             print('download+++++++++'+i['chapter'])
         else:
