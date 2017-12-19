@@ -34,15 +34,18 @@ def get_23us_info(url):
 
 
 def parss_23us_text(text):
-    html = text
-    metaSoup = BeautifulSoup(html, "html.parser")
-    textSoup = metaSoup.select_one('#content')
-    t = textSoup.prettify()
-    t = t[:t.rfind('<br>')]
-    tSoup = BeautifulSoup(t, "html.parser")
-    text = tSoup.get_text()
-    return text
-
+    try:
+        html = text
+        metaSoup = BeautifulSoup(html, "html.parser")
+        textSoup = metaSoup.select_one('#content')
+        t = textSoup.prettify()
+        t = t[:t.rfind('<br>')]
+        tSoup = BeautifulSoup(t, "html.parser")
+        text = tSoup.get_text()
+    except Exception as e:
+        print('parss_23us_text error:'+str(e))
+        return '', html
+    return text, ''
 
 def print_mode_info():
     return "这是23us.la模块"
@@ -58,3 +61,4 @@ def test(url):
     print(parss_23us_text(open_file('23us_v1.txt')))
     # parss_23us_text(open_file('23us_v1.txt'))
 
+# print(get_text(post_html('https://www.23us.la/html/209/209550/1475699.html')))

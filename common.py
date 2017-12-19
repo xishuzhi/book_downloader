@@ -5,6 +5,7 @@ import gzip
 from importlib import import_module
 from threading import Thread
 from urllib import request, error
+import requests
 from bs4 import BeautifulSoup
 # 解决https不受信任
 import ssl
@@ -15,6 +16,7 @@ SITES = {
     '23us':'23us',
     'xs':'xs',
     'paomov':'paomov',
+    'tianxiabachang': 'tianxiabachang',
 
 }
 
@@ -25,6 +27,42 @@ fake_headers = {
     'Accept-Language': 'en-US,en;q=0.8',
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20100101 Firefox/13.0'
 }
+
+
+def get_html(url, code_mode='utf-8',count=0):
+    try:
+        req = request.Request(url)
+        req.add_header('Accept-encoding', 'gzip,deflate,sdch')
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64) '
+                                     'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3033.0 Safari/537.36')
+        # 返回页面内容
+        doc = request.urlopen(req).read()  # python3.x read the html as html code bytearray
+        # 解码
+        try:
+            html = gzip.decompress(doc).decode(req.encoding, 'ignore')
+            # print('返回gzip格式的文件')
+        except Exception as e_gzip:
+            html = doc.decode(code_mode, 'ignore')
+            # print('返回正常格式的文件:' + str(e_gzip))
+    except Exception as e:
+        print('get_html页面打开失败：[%s] error：%s' % (url, e))
+        if count > 5:
+            return '404'
+        return get_html(url, count+1)
+    return html
+
+
+def post_html(url, count=0):
+    try:
+        r = requests.post(url, headers=fake_headers, timeout=10)
+        encodings = requests.utils.get_encodings_from_content(r.text)
+        r.encoding = encodings[0]
+    except Exception as e:
+        print('post_html页面打开失败：[%s] error：%s' % (url, e))
+        if count > 5:
+            return '404'
+        return post_html(url, count+1)
+    return r.text
 
 
 # DEPRECATED in favor of match1()
@@ -112,7 +150,7 @@ def path_format(path):
 def open_file(path):
     try:
         path = path_format(path)
-        with open(path,'r', encoding='utf-8') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             data = f.read()
             f.close()
             return data
@@ -172,6 +210,14 @@ def replace_title(text):
     text = text.lstrip()
     return text
 
+# 替换UTF-8的空格
+def replace_block(text):
+    # u"\xa0\n\t"
+    #move = dict.fromkeys((ord(c) for c in u"\xa0"))
+    t = make_dict(u'\xa0', ' ')
+    text = text.translate(t)
+    return text
+
 
 # 替换字符串
 def replace_file_path(path):
@@ -201,7 +247,7 @@ def getPath():
 
 
 # 合并文本
-def join_text(name,file_list):
+def join_text(name, file_list):
     try:
         with open(name, 'w', encoding='utf-8') as f:
             for i in file_list:
@@ -267,14 +313,20 @@ def start_download(mode, info, path='', retry=0):
         download_list.append(full_path)
         if not os.path.exists(full_path) or len(open_gzip(full_path)) < 20:
             try:
-                fp = request.urlopen(i['url'], timeout=10)
-                html = fp.read()
-                text = mode.get_text(html)
-                text = i['chapter'] + '\n' + text
-                save_gzip(full_path, text)
+                # fp = request.urlopen(i['url'], timeout=10)
+                # html = fp.read()
+                html = post_html(i['url'])
+                text, text_code = mode.get_text(html)
+                if len(text) == 0 and len(text_code) > 0:
+                    save_gzip(path_format(dir_path + '/error_' + f_name), text_code)
+                else:
+                    text = i['chapter'] + '\n' + text
+                    save_gzip(full_path, text)
             except error.URLError as e:
                 print('download error,Time out! :'+str(e))
-                start_download(mode, info, path,retry_count+1)
+                start_download(mode, info, path, retry_count+1)
+            except Exception as ee:
+                print('download other error:' + str(ee))
 
             print('download+++++++++'+i['chapter'])
         else:

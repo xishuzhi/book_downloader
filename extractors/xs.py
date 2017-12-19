@@ -35,14 +35,18 @@ def get_xs_info(url):
 
 
 def parss_xs_text(text):
-    html = text
-    metaSoup = BeautifulSoup(html, "html.parser")
-    textSoup = metaSoup.select_one('#content')
-    t = textSoup.prettify()
-    t = t[:t.rfind('<br>')]
-    tSoup = BeautifulSoup(t, "html.parser")
-    text = tSoup.get_text()
-    return text
+    try:
+        html = text
+        metaSoup = BeautifulSoup(html, "html.parser")
+        textSoup = metaSoup.select_one('#content')
+        t = textSoup.prettify()
+        t = t[:t.rfind('<br>')]
+        tSoup = BeautifulSoup(t, "html.parser")
+        text = tSoup.get_text()
+    except Exception as e:
+        print('parss_xs_text error:'+str(e))
+        return '', html
+    return text, ''
 
 
 def print_mode_info():
@@ -60,3 +64,4 @@ def test(url=''):
     # parss_23us_text(open_file('xs_v1.txt'))
     pass
 
+# print(get_text(post_html('https://www.xs.la/184_184338/9328050.html')))

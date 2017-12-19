@@ -38,13 +38,16 @@ def get_pamomov_info(url):
 
 
 def parss_pamomov_text(text):
-    html = text
-    metaSoup = BeautifulSoup(html, "html.parser")
-    textSoup = metaSoup.select_one('#nr_content > div.novelcontent')
-    text = textSoup.get_text()
-    text = text[text.find('\n\n'):]
-
-    return text
+    try:
+        html = text
+        metaSoup = BeautifulSoup(html, "html.parser")
+        textSoup = metaSoup.select_one('#nr_content > div.novelcontent')
+        text = textSoup.get_text()
+        text = replace_block(text)
+    except Exception as e:
+        print('parss_pamomov_text error:'+str(e))
+        return '', html
+    return text, ''
 
 
 def print_mode_info():
@@ -63,3 +66,6 @@ def test(url=''):
     pass
 
 # test()
+
+
+# print(get_text(post_html('http://www.paomov.com//93/93922/18828770.html')))
