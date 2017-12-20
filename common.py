@@ -16,9 +16,9 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 SITES = {
     'qidian': 'qidian',
-    '23us':'23us',
-    'xs':'xs',
-    'paomov':'paomov',
+    '23us': '23us',
+    'xs': 'xs',
+    'paomov': 'paomov',
     'tianxiabachang': 'tianxiabachang',
 
 }

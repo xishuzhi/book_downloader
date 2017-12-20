@@ -2,7 +2,7 @@
 
 from common import *
 
-__all__ = ['get_universal_catalog','get_universal_info','parss_universal_text']
+__all__ = ['get_universal_catalog', 'get_universal_info', 'parss_universal_text']
 
 catalog_list = list()
 book_info = {'name': '', 'catalog':catalog_list}

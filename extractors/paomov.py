@@ -68,4 +68,6 @@ def test(url=''):
 # test()
 
 
-# print(get_text(post_html('http://www.paomov.com//93/93922/18828770.html')))
+# print(get_text(post_html('http://www.paomov.com/99/99026/23225241.html')))
+
+

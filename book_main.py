@@ -35,6 +35,21 @@ def start_main():
 
 
 def main():
+    from os import path
+    from common import open_file
+    if path.exists('list.txt'):
+        download_list = open_file('list.txt').split('\n')
+        from common import url_to_module, start_download
+        for i in download_list:
+            if i[1] == '#':
+                continue
+            m, url = url_to_module(i)
+            if m is not None:
+                info = m.get_info(url)
+                start_download(m, info)
+        exit(0)
+        pass
+    else:
         start_main()
 
 
