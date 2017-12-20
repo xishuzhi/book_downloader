@@ -6,7 +6,7 @@ __all__ = ['get_23us_info', "parss_23us_text"]
 
 
 catalog_list = list()
-book_info = {'name': '','auteur': '', 'catalog':catalog_list}
+book_info = {'name': '', 'auteur': '', 'catalog':catalog_list}
 
 
 def get_23us_info(url):

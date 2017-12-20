@@ -1,11 +1,11 @@
 # -*- coding：utf-8 -*-
 # http://www.paomov.com/txt90211.shtml
 from common import *
-__all__ = ['get_pamomov_info',"parss_pamomov_text"]
+__all__ = ['get_pamomov_info', "parss_pamomov_text"]
 
 
 catalog_list = list()
-book_info = {'name': '','auteur': '', 'catalog':catalog_list}
+book_info = {'name': '', 'auteur': '', 'catalog' : catalog_list}
 
 
 def get_pamomov_info(url):
@@ -21,7 +21,7 @@ def get_pamomov_info(url):
         dd = catalog_dl.findAll('li')
         for j in dd:
             chapter = str(j.a.text)
-            url = r'http://www.paomov.com/' + str(j.a['href'])
+            url = r'http://www.paomov.com' + str(j.a['href'])
             id = -1
             p = url.rfind('/')
             if p > 0:

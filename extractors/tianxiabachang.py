@@ -2,11 +2,11 @@
 # http://www.tianxiabachang.cn/1_1107/
 
 from common import *
-__all__ = ['get_tianxiabachang_info',"parss_tianxiabachang_text"]
+__all__ = ['get_tianxiabachang_info', "parss_tianxiabachang_text"]
 
 
 catalog_list = list()
-book_info = {'name': '','auteur': '', 'catalog':catalog_list}
+book_info = {'name': '', 'auteur': '', 'catalog':catalog_list}
 
 
 def get_tianxiabachang_info(url):

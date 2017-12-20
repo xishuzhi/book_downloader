@@ -1,14 +1,17 @@
-#-*- coding：utf-8 -*-
+# -*- coding：utf-8 -*-
 import os
 import re
 import gzip
+import requests
+import json
+import ssl
 from importlib import import_module
 from threading import Thread
 from urllib import request, error
-import requests
 from bs4 import BeautifulSoup
+
+
 # 解决https不受信任
-import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 SITES = {
@@ -29,7 +32,30 @@ fake_headers = {
 }
 
 
-def get_html(url, code_mode='utf-8',count=0):
+global cookies_dict
+
+
+def set_cookies(value):
+    # 告诉编译器我在这个方法中使用的cookies_dict是刚才定义的全局变量cookies_dict,而不是方法内部的局部变量.
+    global cookies_dict
+    cookies_dict = value
+
+
+def get_cookies():
+    # 同样告诉编译器我在这个方法中使用的cookies_dict是刚才定义的全局变量cookies_dict,并返回全局变量cookies_dict,而不是方法内部的局部变量.
+    global cookies_dict
+    return cookies_dict
+
+
+def save_cookise(path, cookies):
+    save_file(path, json.dumps(cookies))
+
+
+def open_cookise(path):
+    return json.loads(open_file(path))
+
+
+def open_html(url, code_mode='utf-8', count=0):
     try:
         req = request.Request(url)
         req.add_header('Accept-encoding', 'gzip,deflate,sdch')
@@ -48,15 +74,33 @@ def get_html(url, code_mode='utf-8',count=0):
         print('get_html页面打开失败：[%s] error：%s' % (url, e))
         if count > 5:
             return '404'
-        return get_html(url, count+1)
+        return open_html(url, count+1)
     return html
+
+
+def get_html(url, count=0):
+    try:
+        if get_cookies():
+            r = requests.get(url, headers=fake_headers, cookies=get_cookies(), timeout=10)
+        else:
+            r = requests.get(url, headers=fake_headers, timeout=10)
+        encodings = requests.utils.get_encodings_from_content(r.text)
+        if encodings:
+            r.encoding = encodings[0]
+    except Exception as e:
+        print('get_html页面打开失败：[%s] error：%s' % (url, e))
+        if count > 5:
+            return '404'
+        return get_html(url, count+1)
+    return r.text
 
 
 def post_html(url, count=0):
     try:
         r = requests.post(url, headers=fake_headers, timeout=10)
         encodings = requests.utils.get_encodings_from_content(r.text)
-        r.encoding = encodings[0]
+        if encodings:
+            r.encoding = encodings[0]
     except Exception as e:
         print('post_html页面打开失败：[%s] error：%s' % (url, e))
         if count > 5:
@@ -147,6 +191,19 @@ def path_format(path):
     return path
 
 
+def save_file(path, data):
+    try:
+        path = path_format(path)
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(str(data))
+            f.close()
+            return True
+    except Exception as e:
+        print('save_file error:file(%s):%s' % (path, e))
+        return False
+        pass
+
+
 def open_file(path):
     try:
         path = path_format(path)
@@ -155,7 +212,7 @@ def open_file(path):
             f.close()
             return data
     except Exception as e:
-        print('error:file(%s):%s' % (path, e))
+        print('open_file error:file(%s):%s' % (path, e))
         return ''
         pass
 
@@ -209,6 +266,7 @@ def replace_title(text):
     text = text.strip()
     text = text.lstrip()
     return text
+
 
 # 替换UTF-8的空格
 def replace_block(text):
@@ -271,6 +329,7 @@ def join_text(name, file_list):
         pass
 
 
+# 合并文本存为gz
 def join_text_gz(name, file_list):
     try:
         with gzip.open(name, 'w') as f:

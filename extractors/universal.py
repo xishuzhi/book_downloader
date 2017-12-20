@@ -1,6 +1,6 @@
 # -*- coding：utf-8 -*-
 
-# from common import *
+from common import *
 
 __all__ = ['get_universal_catalog','get_universal_info','parss_universal_text']
 
