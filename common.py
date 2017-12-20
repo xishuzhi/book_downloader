@@ -20,6 +20,7 @@ SITES = {
     'xs': 'xs',
     'paomov': 'paomov',
     'tianxiabachang': 'tianxiabachang',
+    'luoqiuzw': 'luoqiuzw',
 
 }
 

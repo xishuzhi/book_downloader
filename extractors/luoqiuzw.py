@@ -2,15 +2,15 @@
 # http://www.tianxiabachang.cn/1_1107/
 
 from common import *
-__all__ = ['get_tianxiabachang_info', "parss_tianxiabachang_text"]
-host_url = r'http://www.tianxiabachang.cn'
-mode_name = 'tianxiabachang'
+__all__ = ['get_luoqiuzw_info ', 'parss_luoqiuzw_text']
+host_url = r'http://www.luoqiuzw.com'
+mode_name = 'luoqiuzw'
 
 catalog_list = list()
 book_info = {'name': '', 'auteur': '', 'catalog': catalog_list}
 
 
-def get_tianxiabachang_info(url):
+def get_luoqiuzw_info(url):
     html = post_html(url)
     try:
         metaSoup = BeautifulSoup(html, "html.parser")
@@ -37,13 +37,13 @@ def get_tianxiabachang_info(url):
         book_info['auteur'] = book_acter
         book_info['catalog'] = l
     except Exception as e:
-        print('get_%s_info BeautifulSoup error::%s' % (mode_name, str(e)))
+        print('get_%s_info BeautifulSoup error:%s' % (mode_name, str(e)))
         pass
 
     return book_info
 
 
-def parss_tianxiabachang_text(text):
+def parss_luoqiuzw_text(text):
     try:
         html = text
         metaSoup = BeautifulSoup(html, "html.parser")
@@ -52,7 +52,7 @@ def parss_tianxiabachang_text(text):
         text = replace_block(text)
         text = '\n' + text
     except Exception as e:
-        print('parss_%s_text error:%s' % (mode_name, str(e)))
+        print('parss_%s_text error:' % (mode_name, str(e)))
         return '', html
     return text, ''
 
@@ -60,8 +60,8 @@ def parss_tianxiabachang_text(text):
 def print_mode_info():
     return "这是%s模块" % mode_name
 
-get_info = get_tianxiabachang_info
-get_text = parss_tianxiabachang_text
+get_info = get_luoqiuzw_info
+get_text = parss_luoqiuzw_text
 mode_info = print_mode_info
 
 
@@ -72,4 +72,6 @@ def test(url=''):
     print(get_text(post_html(info['catalog'][0]['url'])))
     pass
 
-# test('http://www.tianxiabachang.cn/1_1107/')
+# test('http://www.luoqiuzw.com/book/314/')
+
+

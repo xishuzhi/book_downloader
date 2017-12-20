@@ -2,16 +2,15 @@
 # http://www.paomov.com/txt90211.shtml
 from common import *
 __all__ = ['get_pamomov_info', "parss_pamomov_text"]
-
+host_url = r'http://www.paomov.com'
+mode_name = 'pamomov'
 
 catalog_list = list()
 book_info = {'name': '', 'auteur': '', 'catalog' : catalog_list}
 
 
 def get_pamomov_info(url):
-    fp = request.urlopen(url)
-    html = fp.read()
-    # html = open_file("paomov.html")
+    html = post_html(url)
     try:
         metaSoup = BeautifulSoup(html, "html.parser")
         book_name = metaSoup.select_one('body > div > div.catalog > div > div.introduce > h1').text
@@ -21,7 +20,7 @@ def get_pamomov_info(url):
         dd = catalog_dl.findAll('li')
         for j in dd:
             chapter = str(j.a.text)
-            url = r'http://www.paomov.com' + str(j.a['href'])
+            url = host_url + str(j.a['href'])
             id = -1
             p = url.rfind('/')
             if p > 0:
@@ -31,7 +30,7 @@ def get_pamomov_info(url):
         book_info['auteur'] = book_acter
         book_info['catalog'] = l
     except Exception as e:
-        print('error:::'+str(e))
+        print('get_%s_info BeautifulSoup error:%s' % (mode_name, str(e)))
         pass
 
     return book_info
@@ -45,13 +44,13 @@ def parss_pamomov_text(text):
         text = textSoup.get_text()
         text = replace_block(text)
     except Exception as e:
-        print('parss_pamomov_text error:'+str(e))
+        print('parss_%s_text error:' % (mode_name, str(e)))
         return '', html
     return text, ''
 
 
 def print_mode_info():
-    return "这是www.paomov.com模块"
+    return "这是%s模块" % mode_name
 
 get_info = get_pamomov_info
 get_text = parss_pamomov_text
@@ -59,15 +58,13 @@ mode_info = print_mode_info
 
 
 def test(url=''):
-    print('test:' + print_mode_info() + ":" + url)
-    # print(get_info(url))
-    # print(parss_pamomov_text(open_file('xs_v1.html')))
-    print(get_text(open_file('paomov_v1.html')))
+    print('test %s url=%s' % (print_mode_info(), url))
+    info = get_info(url)
+    print(info)
+    print(get_text(post_html(info['catalog'][0]['url'])))
     pass
 
-# test()
+# test('http://www.paomov.com/txt99026.shtml')
 
-
-# print(get_text(post_html('http://www.paomov.com/99/99026/23225241.html')))
 
 
