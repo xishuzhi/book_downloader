@@ -71,7 +71,7 @@ def open_html(url, code_mode='utf-8', count=0):
             html = doc.decode(code_mode, 'ignore')
             # print('返回正常格式的文件:' + str(e_gzip))
     except Exception as e:
-        print('get_html页面打开失败：[%s] error：%s' % (url, e))
+        print('open_html页面打开失败：[%s] error：%s' % (url, e))
         if count > 5:
             return '404'
         return open_html(url, count+1)
