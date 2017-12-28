@@ -21,6 +21,7 @@ SITES = {
     'paomov': 'paomov',
     'tianxiabachang': 'tianxiabachang',
     'luoqiuzw': 'luoqiuzw',
+    '23wx': '23wx',
 
 }
 
@@ -77,6 +78,20 @@ def open_html(url, code_mode='utf-8', count=0):
             return '404'
         return open_html(url, count+1)
     return html
+
+
+def open_html_nogzip(url, code_mode='utf-8', count=0):
+    try:
+        webheader = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'}
+        req = request.Request(url=url, headers=webheader)
+        webPage = request.urlopen(req)
+        data = webPage.read()
+        data = data.decode(code_mode)
+        return data
+    except Exception as e:
+        print("open_html_nogzip error:" + str(e))
+        if count < 5:
+            open_html_nogzip(url, code_mode, count+1)
 
 
 def get_html(url, count=0):
