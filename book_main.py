@@ -44,10 +44,9 @@ def main():
             if i[0] == '#':
                 continue
             m, url = url_to_module(i)
-            print(url)
-            # if m is not None:
-            #     info = m.get_info(url)
-            #     start_download(m, info)
+            if m is not None:
+                info = m.get_info(url)
+                start_download(m, info)
         exit(0)
         pass
     else:

@@ -22,6 +22,7 @@ SITES = {
     'tianxiabachang': 'tianxiabachang',
     'luoqiuzw': 'luoqiuzw',
     '23wx': '23wx',
+    'biqugezw': 'biqugezw',
 
 }
 
