@@ -41,12 +41,13 @@ def main():
         download_list = open_file('list.txt').split('\n')
         from common import url_to_module, start_download
         for i in download_list:
-            if i[1] == '#':
+            if i[0] == '#':
                 continue
             m, url = url_to_module(i)
-            if m is not None:
-                info = m.get_info(url)
-                start_download(m, info)
+            print(url)
+            # if m is not None:
+            #     info = m.get_info(url)
+            #     start_download(m, info)
         exit(0)
         pass
     else:
