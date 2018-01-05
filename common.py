@@ -15,14 +15,14 @@ from bs4 import BeautifulSoup
 ssl._create_default_https_context = ssl._create_unverified_context
 
 SITES = {
-    'qidian': 'qidian',
-    '23us': '23us',
-    'xs': 'xs',
-    'paomov': 'paomov',
-    'tianxiabachang': 'tianxiabachang',
-    'luoqiuzw': 'luoqiuzw',
-    '23wx': '23wx',
-    'biqugezw': 'biqugezw',
+    'www.qidian.com': 'qidian',
+    'www.23us.la': '23us',
+    'www.xs.la': 'xs',
+    'www.paomov.com': 'paomov',
+    'www.tianxiabachang.cn': 'tianxiabachang',
+    'www.luoqiuzw.com': 'luoqiuzw',
+    'www.23wx.cm': '23wx',
+    'www.biqugezw.com': 'biqugezw',
 
 }
 
@@ -143,35 +143,17 @@ def r1_of(patterns, text):
 
 def url_to_module(url):
     try:
-        video_host = r1(r'https?://([^/]+)/', url)
-        video_url = r1(r'https?://[^/]+(.*)', url)
-        assert video_host and video_url
+        book_host = r1(r'https?://([^/]+)/', url)
+        assert book_host
     except:
-        video_host = r1(r'https?://([^/]+)/', url)
-        video_url = r1(r'https?://[^/]+(.*)', url)
-
-    # if video_host.endswith('.com.cn'):
-    #     video_host = video_host[:-3]
-    domain = r1(r'(\.[^.]+\.[^.]+)$', video_host) or video_host
-    assert domain, 'unsupported url: ' + url
-    #return video_host,video_url
-
-    k = r1(r'([^.]+)', domain)
-    print("检测："+k)
-    if k in SITES:
-        print(k+"在模块中")
-        return import_module('.'.join(['extractors', SITES[k]])), url
+        book_host = r1(r'https?://([^/]+)/', url)
+    # print("检测："+book_host)
+    if book_host in SITES:
+        # print(book_host+"在模块中")
+        return import_module('.'.join(['extractors', SITES[book_host]])), url
     else:
-        return None,"None"
-    #     import http.client
-    #     conn = http.client.HTTPConnection(video_host)
-    #     conn.request("HEAD", video_url, headers=fake_headers)
-    #     res = conn.getresponse()
-    #     location = res.getheader('location')
-    #     if location and location != url and not location.startswith('/'):
-    #         return url_to_module(location)
-    #     else:
-    #         return import_module('you_get.extractors.universal'), url
+        # print("失败：" + book_host)
+        return None, "None"
 
 
 class downloadbook(Thread):
@@ -410,4 +392,24 @@ def start_download(mode, info, path='', retry=0):
     print('join file')
     join_text_gz(path_format(dir_path+'/'+book_name+'.txt.gz'), download_list)
 
+
+def test_url(url):
+    out_str = 'start url_to_module(%s)---------:' % url
+    try:
+        mode, t_url = url_to_module(url)
+        if mode:
+            out_str += "成功"
+        else:
+            out_str += "失败"
+    except Exception as e:
+        print('error:' + url + 'Message:' + str(e))
+    finally:
+        print(out_str)
+
+# test_url('http://www.biqugezw.com/15_15701/')
+# test_url('http://www.paomov.com/txt99026.shtml')
+# test_url('http://www.biqugezw.com/15_15701/')
+# test_url('http://www.23wx.cm/24/24151/index.html')
+# test_url('https://www.xs.la/184_184338/')
+# test_url('http://www.tianxiabachang.cn/1_1107/')
 
