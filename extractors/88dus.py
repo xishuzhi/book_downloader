@@ -31,6 +31,7 @@ def open_88dus_html(url, code_mode='utf-8', count=0):
         return open_88dus_html(url, count+1)
     return html
 
+
 def get_88dus_info(url):
     html = open_88dus_html(url)
     host_88dus = url
@@ -75,24 +76,6 @@ def parss_88dus_text(html):
         return '', html
     return text, ''
 
-def parss_88dus_text2222(text):
-    out_text=''
-    try:
-        html = text
-        metaSoup = BeautifulSoup(html, "html.parser")
-        textSoup = metaSoup.select_one('body > div.novel > div.yd_text2')
-        t = textSoup.prettify()
-        t = t[:t.rfind('<br>')]
-        tSoup = BeautifulSoup(t, "html.parser")
-        tt = tSoup.get_text()
-        tt = textSoup.get_text()
-        tt.replace('\xa0', '')
-        for i in tt:
-            out_text += i
-    except Exception as e:
-        print('parss_%s_text error:%s' % (mode_name, str(e)))
-        return '', html
-    return out_text, ''
 
 def print_mode_info():
     return "这是%s模块" % mode_name
