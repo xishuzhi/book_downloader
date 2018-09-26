@@ -56,6 +56,7 @@ def print_mode_info():
 
 get_info = get_23us_info
 get_text = parss_23us_text
+get_html = post_html
 mode_info = print_mode_info
 
 

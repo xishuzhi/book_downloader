@@ -17,12 +17,14 @@ ssl._create_default_https_context = ssl._create_unverified_context
 SITES = {
     'www.qidian.com': 'qidian',
     'www.23us.la': '23us',
+    'www.23us.cc': '23us_cc',
     'www.xs.la': 'xs',
     'www.paomov.com': 'paomov',
     'www.tianxiabachang.cn': 'tianxiabachang',
     'www.luoqiuzw.com': 'luoqiuzw',
     'www.23wx.cm': '23wx',
     'www.biqugezw.com': 'biqugezw',
+    'www.88dus.com': '88dus'
 
 }
 
@@ -374,6 +376,7 @@ def start_download(mode, info, path='', retry=0):
                 # fp = request.urlopen(i['url'], timeout=10)
                 # html = fp.read()
                 html = post_html(i['url'])
+                html = mode.get_html(i['url'])
                 text, text_code = mode.get_text(html)
                 if len(text) == 0 and len(text_code) > 0:
                     save_gzip(path_format(dir_path + '/error_' + f_name), text_code)

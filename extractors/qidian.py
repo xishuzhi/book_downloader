@@ -37,4 +37,5 @@ def print_qidian_mode_info():
 # Author
 getCatalog = get_qidiana_catalog
 download = getCatalog
+get_html = post_html
 mode_info = print_qidian_mode_info

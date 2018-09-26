@@ -62,6 +62,7 @@ def print_mode_info():
 
 get_info = get_tianxiabachang_info
 get_text = parss_tianxiabachang_text
+get_html = post_html
 mode_info = print_mode_info
 
 
