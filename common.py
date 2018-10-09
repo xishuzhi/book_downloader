@@ -5,6 +5,7 @@ import gzip
 import requests
 import json
 import ssl
+import bs4
 from importlib import import_module
 from threading import Thread
 from urllib import request, error
@@ -24,7 +25,9 @@ SITES = {
     'www.luoqiuzw.com': 'luoqiuzw',
     'www.23wx.cm': '23wx',
     'www.biqugezw.com': 'biqugezw',
-    'www.88dus.com': '88dus'
+    'www.88dus.com': '88dus',
+    'www.ymoxuan.com': 'ymoxuan',
+    'm.80txt.com': 'm80txt'
 
 }
 
@@ -364,7 +367,7 @@ def start_download(mode, info, path='', retry=0):
     dir_path = path_format(thisPath+'/'+book_name)
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
-    save_gzip(path_format(dir_path+'/'+'info.txt.gz'),str(info))
+    save_gzip(path_format(dir_path+'/'+'info.txt.gz'), str(info))
     download_list = list()
     for i in info['catalog']:
         print(i)
@@ -375,7 +378,7 @@ def start_download(mode, info, path='', retry=0):
             try:
                 # fp = request.urlopen(i['url'], timeout=10)
                 # html = fp.read()
-                html = post_html(i['url'])
+                # html = post_html(i['url'])
                 html = mode.get_html(i['url'])
                 text, text_code = mode.get_text(html)
                 if len(text) == 0 and len(text_code) > 0:
