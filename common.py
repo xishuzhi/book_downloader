@@ -265,7 +265,7 @@ def make_dict(s_in,s_out):
 
 # 替换标题不用做路径和文件名
 def replace_title(text):
-    t = make_dict('ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ１２３４５６７８９０，．！?!\n', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890，。！？！ ')
+    t = make_dict('ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ１２３４５６７８９０・，．！?!\n', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890·，。！？！ ')
     text = text.translate(t)
     text = text.strip()
     text = text.lstrip()
@@ -412,6 +412,106 @@ def test_url(url):
     finally:
         print(out_str)
 
+
+def _thread_download(chapter_info, full_path, mode, lock, retry=0):
+    retry_count = retry
+    if retry_count >= 5:
+        lock.release()
+        return
+    if not os.path.exists(full_path) or len(open_gzip(full_path)) < 20:
+        try:
+            html = mode.get_html(chapter_info['url'])
+            text, text_code = mode.get_text(html)
+            if len(text) == 0 and len(text_code) > 0:
+                dir_path = os.path.dirname(full_path)
+                f_name = os.path.basename(full_path)
+                save_gzip(path_format(dir_path + '/error_' + f_name), text_code)
+            else:
+                text = chapter_info['chapter'] + '\n\n' + text
+                save_gzip(full_path, text)
+        except error.URLError as e:
+            print('download error,Time out! :' + str(e))
+            _thread_download(chapter_info, full_path, mode, lock, retry_count + 1)
+        except Exception as ee:
+            print('download other error:' + str(ee))
+
+        print('download+++++++++' + chapter_info['chapter'])
+    else:
+        print('download========' + chapter_info['chapter'])
+    lock.release()
+
+
+def check_download_thread(thread_list):
+    for l in thread_list:
+        if not l.locked():
+            thread_list.remove(l)
+    if len(thread_list) is 0:
+        return False
+    else:
+        return True
+
+
+def test_download(mode, info=None, book_name='', path='', retry=0):
+    retry_count = retry
+    if retry_count >= 5:
+        return
+
+    if info is None:
+        if len(book_name) > 1:
+            _book_name = book_name
+        else:
+            return
+    else:
+        _book_name = info['name']
+
+    thisPath = path
+
+    if thisPath == '':
+        thisPath = getPath()
+
+    dir_path = path_format(thisPath + '/' + _book_name)
+    is_new_download = True
+    info_json_file_path = dir_path + '/' + 'info.json.gz'
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
+    else:
+        try:
+            if os.path.exists(info_json_file_path) and info is None:
+                info_file = open_gzip(info_json_file_path)
+                info = json.loads(info_file)
+                print(info)
+                is_new_download = False
+        except Exception as e:
+            print(e)
+    if info is None:
+        return
+    if is_new_download:
+        save_gzip(path_format(dir_path + '/' + 'info.txt.gz'), str(info))
+        save_gzip(path_format(dir_path + '/' + 'info.json.gz'), json.dumps(info))
+    download_list = list()
+    locks = []
+    thread_count = 10
+    download_point = 0
+
+    import _thread
+    chapter_infos = info['catalog']
+    while len(chapter_infos) > download_point:
+        if len(locks) < thread_count:
+            lock = _thread.allocate_lock()
+            lock.acquire()
+            locks.append(lock)
+            chapter_info = chapter_infos[download_point]
+            f_name = chapter_info['id'] + '.txt.gz'
+            full_path = path_format(dir_path + '/' + f_name)
+            download_list.append(full_path)
+            _thread.start_new_thread(_thread_download, (chapter_info, full_path, mode, lock))
+            download_point = download_point + 1
+        check_download_thread(locks)
+    while check_download_thread(locks):
+        check_download_thread(locks)
+    print('join file')
+    join_text_gz(path_format(dir_path+'/'+_book_name+'.txt.gz'), download_list)
+
 # test_url('http://www.biqugezw.com/15_15701/')
 # test_url('http://www.paomov.com/txt99026.shtml')
 # test_url('http://www.biqugezw.com/15_15701/')
@@ -419,3 +519,7 @@ def test_url(url):
 # test_url('https://www.xs.la/184_184338/')
 # test_url('http://www.tianxiabachang.cn/1_1107/')
 
+
+# from common import url_to_module
+# m = import_module('.'.join(['extractors', SITES['m.80txt.com']]))
+# test_download(m, '')

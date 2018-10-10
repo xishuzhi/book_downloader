@@ -39,14 +39,18 @@ def main():
     from common import open_file
     if path.exists('list.txt'):
         download_list = open_file('list.txt').split('\n')
-        from common import url_to_module, start_download
+        from common import url_to_module, start_download, test_download
         for i in download_list:
             if i[0] == '#':
                 continue
             m, url = url_to_module(i)
             if m is not None:
                 info = m.get_info(url)
-                start_download(m, info)
+                # start_download(m, info)
+                test_download(m, info)
+                # book_name = m.get_m80txt_info(url, True)
+                # if len(book_name) > 1:
+                #     test_download(m, book_name, info)
         exit(0)
         pass
     else:

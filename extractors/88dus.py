@@ -46,7 +46,7 @@ def open_88dus_html(url, code_mode='utf-8', count=0):
     }
     try:
         # 返回页面内容
-        r = requests.get(url, headers=headers)
+        r = requests.get(url, headers=headers, timeout=5)
         html = r.text
         html = html.encode(r.encoding)
 

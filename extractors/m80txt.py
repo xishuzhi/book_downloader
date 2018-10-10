@@ -25,7 +25,7 @@ def open_m80txt_html(url, code_mode='utf-8', count=0):
     }
     try:
         # 返回页面内容
-        r = requests.get(url, headers=headers)
+        r = requests.get(url, headers=headers, timeout=5)
         html = r.text
         html = html.encode(r.encoding)
 
@@ -74,15 +74,16 @@ def get_book_list(page_text):
 
 
 
-def get_m80txt_info(url):
+def get_m80txt_info(url, only_book_name=False):
     html = open_m80txt_html(url)
     try:
-
         metaSoup = BeautifulSoup(html, "html.parser")
         name_text = metaSoup.select_one('#bqgmb_h1')
         tmp = name_text.text
         tmp_list = tmp.split(' ')
         book_name = tmp_list[0]
+        if only_book_name:
+            return book_name
         book_acter = ''
 
         page_list = get_page_list(html)
@@ -107,8 +108,20 @@ def get_m80txt_info(url):
 def parss_88dus_text(html):
     try:
         metaSoup = BeautifulSoup(html, "html.parser")
-        html_text = metaSoup.select_one('#nr1')
-        text = html_text.text
+        file_text = metaSoup.prettify()
+        # 处理'&nbsp;
+        file_text = file_text.replace('&nbsp;', ' ')
+        metaSoup = BeautifulSoup(file_text, "html.parser")
+        # 处理标签
+        strong_tag = metaSoup.find_all(['head', 'strong', 'a', 'table'])
+        for st in strong_tag:
+            st.clear()
+        # 处理文章内容
+        file_text = metaSoup.prettify()
+        file_text = file_text[file_text.find('<div id="nr1">'):file_text.find('content2();')]
+        metaSoup = BeautifulSoup(file_text, "html.parser")
+        # 转换为文本
+        text = metaSoup.text
     except Exception as e:
         print('parss_%s_text error:%s' % (mode_name, str(e)))
         return '', html
@@ -160,11 +173,47 @@ def test(url=''):
         #     all_bool_list = all_bool_list + page
         # print(all_bool_list)
 
-    # # 获取章节内容
-        # metaSoup = BeautifulSoup(open_file('m80txt_test2.html'), "html.parser")
-        # html = metaSoup.select_one('#nr1')
-        # text = html.text
-        # print(text)
+    # # 获取章节内容 https://m.80txt.com/56121/16518284.html  https://m.80txt.com/79091/25374278.html
+    html = open_m80txt_html('https://m.80txt.com/56121/16742591.html')
+    metaSoup_0 = BeautifulSoup(html, "html.parser")
+    file_text = metaSoup_0.prettify()
+    file_text = file_text.replace('&nbsp;', ' ')
+    # file_text = file_text.replace('a&nbsp;', 'a ')
+    metaSoup_1  = BeautifulSoup(file_text, "html.parser")
+    strong_tag = metaSoup_1.find_all(['head', 'strong', 'a', 'table'])
+    for st in strong_tag:
+        st.clear()
+    html2 = metaSoup_1.prettify()
+    html3 = html2[html2.find('<div id="nr1">'):html2.find('content2();')]
+    metaSoup_2 = BeautifulSoup(html3, "html.parser")
+    text = metaSoup_2.text
+    print(text)
+    # print(file_text)
+    # p = re.compile(r'<a.*</.*>')
+    # t = p.sub('', file_text)
+    # print(t)
+    # '<a&nbsp;href="http://www.qiushu.cc"&nbsp;target="_blank">求书网www.qiushu.Cc</a>'
+    # metaSoup = BeautifulSoup(t, "html.parser")
+    # # strong_tag = metaSoup.find_all('a &nbsp;')
+    # # print(strong_tag)
+    # # for st in strong_tag:
+    # #     st.clear()
+    # strong_tag = metaSoup.find_all(['head', 'strong', 'a ', 'table'])
+    # for st in strong_tag:
+    #     st.clear()
+    # # print('c------------------------')
+    # # print(metaSoup)
+    # # # strong_taga = metaSoup.findAll('a')
+    # # # for sta in strong_taga:
+    # # #     print(sta.text)
+    # # #     sta.extract()
+    # # #
+    # # print('text------------------------')
+    # html = metaSoup.select_one('#nr')
+    # # print(html)
+    # text = html.text
+    # print('------------------------')
+    # print(text)
 
     # # 获取书名作者
         # metaSoup = BeautifulSoup(open_file('m80txt_test.html'), "html.parser")
