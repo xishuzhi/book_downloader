@@ -28,7 +28,7 @@ def start_main():
                 print('输入错误！')
         print('exit')
     except Exception as e:
-        print('Error: %s,%s' % (selection,e))
+        print('Error: %s,%s' % (selection, e))
         return start_main()
     finally:
         pass
@@ -41,7 +41,7 @@ def main():
         download_list = open_file('list.txt').split('\n')
         from common import url_to_module, start_download, test_download
         for i in download_list:
-            if i[0] == '#':
+            if len(i) > 1 and i[0] == '#':
                 continue
             m, url = url_to_module(i)
             if m is not None:

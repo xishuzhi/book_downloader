@@ -1,9 +1,9 @@
 # -*- coding：utf-8 -*-
-# https://www.88dus.com/xiaoshuo/20/20363/
+# https://www.x88dushu.com/xiaoshuo/20/20363/
 from common import *
 
 __all__ = ['get_88dus_info', "parss_88dus_text"]
-host_url = r'https://www.88dus.com'
+host_url = r'https://www.x88dushu.com'
 mode_name = '88dus'
 
 catalog_list = list()
@@ -134,5 +134,6 @@ def test(url=''):
     save_file('s1.txt', r2.text)
     pass
 
-test('https://www.88dus.com/xiaoshuo/20/20361/')
+# test('https://www.88dus.com/xiaoshuo/20/20361/')
 
+# test('https://www.x88dushu.com/xiaoshuo/107/107404/')

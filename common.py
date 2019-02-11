@@ -25,7 +25,7 @@ SITES = {
     'www.luoqiuzw.com': 'luoqiuzw',
     'www.23wx.cm': '23wx',
     'www.biqugezw.com': 'biqugezw',
-    'www.88dus.com': '88dus',
+    'www.x88dushu.com': '88dus',
     'www.ymoxuan.com': 'ymoxuan',
     'm.80txt.com': 'm80txt'
 
